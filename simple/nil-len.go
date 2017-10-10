@@ -1,6 +1,6 @@
-package pkg
+package simple
 
-func fn() {
+func fn11() {
 	var pa *[5]int
 	var s []int
 	var m map[int]int

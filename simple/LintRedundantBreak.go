@@ -1,6 +1,6 @@
-package pkg
+package simple
 
-func fn(x int) {
+func fn8(x int) {
 	switch x {
 	case 1:
 		println()

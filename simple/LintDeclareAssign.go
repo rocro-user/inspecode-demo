@@ -1,6 +1,6 @@
-package pkg
+package simple
 
-func fn() {
+func fn7() {
 	var x int // MATCH "should merge variable declaration with assignment on next line"
 	x = 1
 	_ = x

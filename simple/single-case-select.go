@@ -1,6 +1,6 @@
-package pkg
+package simple
 
-func fn() {
+func fn12() {
 	var ch chan int
 	select { // MATCH /should use a simple channel send/
 	case <-ch:

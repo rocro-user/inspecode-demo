@@ -1,7 +1,7 @@
-package pkg
+package simple
 
-func fn() bool { return true }
-func fn1() bool {
+func fn4() bool { return true }
+func fn4_1() bool {
 	x := true
 	if x { // MATCH /should use 'return <expr>'/
 		return true
@@ -9,7 +9,7 @@ func fn1() bool {
 	return false
 }
 
-func fn2() bool {
+func fn4_2() bool {
 	x := true
 	if !x {
 		return true
@@ -20,7 +20,7 @@ func fn2() bool {
 	return false
 }
 
-func fn3() int {
+func fn4_3() int {
 	var x bool
 	if x {
 		return 1
@@ -28,31 +28,31 @@ func fn3() int {
 	return 2
 }
 
-func fn4() bool { return true }
+func fn4_4() bool { return true }
 
-func fn5() bool {
-	if fn() { // MATCH /should use 'return <expr>'/
+func fn4_5() bool {
+	if fn4() { // MATCH /should use 'return <expr>'/
 		return false
 	}
 	return true
 }
 
-func fn6() bool {
-	if fn3() != fn3() { // MATCH /should use 'return <expr>'/
+func fn4_6() bool {
+	if fn4_3() != fn4_3() { // MATCH /should use 'return <expr>'/
 		return true
 	}
 	return false
 }
 
-func fn7() bool {
+func fn4_7() bool {
 	if 1 > 2 { // MATCH /should use 'return <expr>'/
 		return true
 	}
 	return false
 }
 
-func fn8() bool {
-	if fn() || fn() {
+func fn4_8() bool {
+	if fn4() || fn4() {
 		return true
 	}
 	return false

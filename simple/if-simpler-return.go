@@ -1,8 +1,8 @@
-package pkg
+package simple
 
 import "errors"
 
-func fn1() error {
+func fn5_1() error {
 	var err error
 
 	if err != nil { // MATCH /simplified/
@@ -18,7 +18,7 @@ func fn1() error {
 	return err
 }
 
-func fn2() (int, string, error) {
+func fn5_2() (int, string, error) {
 	var x int
 	var y string
 	var z int
@@ -60,7 +60,7 @@ func fn2() (int, string, error) {
 	return 42, "foo", err
 }
 
-func fn3() error {
+func fn5_3() error {
 	var err error
 	if err != nil {
 		return err
@@ -71,7 +71,7 @@ func fn3() error {
 	return nil
 }
 
-func fn4(i int, err error) error {
+func fn5_4(i int, err error) error {
 	if err != nil {
 		return err
 	} else if i == 1 {
@@ -80,7 +80,7 @@ func fn4(i int, err error) error {
 	return nil
 }
 
-func fn5() interface{} {
+func fn5_5() interface{} {
 	var i *int
 	if i != nil {
 		return i
@@ -94,7 +94,7 @@ func fn5() interface{} {
 	return nil
 }
 
-func fn6() {
+func fn5_6() {
 	_ = func() error {
 		var err error
 		if err != nil { // MATCH /simplified/

@@ -1,11 +1,11 @@
-package pkg
+package simple
 
 import (
 	"bytes"
 	"strings"
 )
 
-func fn() {
+func fn2() {
 	_ = strings.IndexRune("", 'x') > -1 // MATCH / strings.ContainsRune/
 	_ = strings.IndexRune("", 'x') >= 0 // MATCH / strings.ContainsRune/
 	_ = strings.IndexRune("", 'x') > 0

@@ -1,26 +1,26 @@
-package pkg
+package simple
 
-func fn1() bool { return false }
-func fn2() bool { return false }
+func fn1_1() bool { return false }
+func fn1_2() bool { return false }
 
-func fn() {
+func fn1() {
 	type T bool
 	var x T
 	const t T = false
 	if x == t {
 	}
-	if fn1() == true { // MATCH "simplified to fn1()"
+	if fn1_1() == true { // MATCH "simplified to fn1_1()"
 	}
-	if fn1() != true { // MATCH "simplified to !fn1()"
+	if fn1_1() != true { // MATCH "simplified to !fn1_1()"
 	}
-	if fn1() == false { // MATCH "simplified to !fn1()"
+	if fn1_1() == false { // MATCH "simplified to !fn1_1()"
 	}
-	if fn1() != false { // MATCH "simplified to fn1()"
+	if fn1_1() != false { // MATCH "simplified to fn1_1()"
 	}
-	if fn1() && (fn1() || fn1()) || (fn1() && fn1()) == true { // MATCH "simplified to (fn1() && fn1())"
+	if fn1_1() && (fn1_1() || fn1_1()) || (fn1_1() && fn1_1()) == true { // MATCH "simplified to (fn1_1() && fn1_1())"
 	}
 
-	if (fn1() && fn2()) == false { // MATCH "simplified to !(fn1() && fn2())"
+	if (fn1_1() && fn1_2()) == false { // MATCH "simplified to !(fn1_1() && fn1_2())"
 	}
 
 	var y bool
