@@ -13,9 +13,9 @@ import (
 
 	"golang.org/x/net/context"
 
+	"github.com/luci/luci-go/common/clock"
 	ds "github.com/tetrafolium/gae/service/datastore"
 	tq "github.com/tetrafolium/gae/service/taskqueue"
-	"github.com/luci/luci-go/common/clock"
 )
 
 var (

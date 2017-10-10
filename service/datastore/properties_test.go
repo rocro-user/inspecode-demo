@@ -11,8 +11,8 @@ import (
 	"testing"
 	"time"
 
-	"github.com/tetrafolium/gae/service/blobstore"
 	. "github.com/smartystreets/goconvey/convey"
+	"github.com/tetrafolium/gae/service/blobstore"
 )
 
 type myint int

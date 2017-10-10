@@ -7,10 +7,10 @@ package dscache
 import (
 	"sync"
 
-	"github.com/tetrafolium/gae/service/datastore"
-	"github.com/tetrafolium/gae/service/memcache"
 	"github.com/luci/luci-go/common/errors"
 	log "github.com/luci/luci-go/common/logging"
+	"github.com/tetrafolium/gae/service/datastore"
+	"github.com/tetrafolium/gae/service/memcache"
 )
 
 type dsTxnState struct {

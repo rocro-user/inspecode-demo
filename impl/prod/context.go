@@ -13,8 +13,8 @@ import (
 
 	"github.com/tetrafolium/gae/service/info"
 	"github.com/tetrafolium/gae/service/urlfetch"
-	"golang.org/x/net/context"
 	gOAuth "github.com/tetrafolium/oauth2/google"
+	"golang.org/x/net/context"
 	"google.golang.org/appengine"
 	"google.golang.org/appengine/remote_api"
 )

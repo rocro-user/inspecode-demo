@@ -8,11 +8,11 @@ import (
 	"bytes"
 	"testing"
 
-	"github.com/tetrafolium/gae/service/datastore"
-	"github.com/tetrafolium/gae/service/datastore/serialize"
 	"github.com/luci/gkvlite"
 	"github.com/luci/luci-go/common/cmpbin"
 	. "github.com/smartystreets/goconvey/convey"
+	"github.com/tetrafolium/gae/service/datastore"
+	"github.com/tetrafolium/gae/service/datastore/serialize"
 )
 
 func mkNum(n int64) []byte {

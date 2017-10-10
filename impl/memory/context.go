@@ -8,8 +8,8 @@ import (
 	"errors"
 	"sync"
 
-	ds "github.com/tetrafolium/gae/service/datastore"
 	"github.com/luci/luci-go/common/logging/memlogger"
+	ds "github.com/tetrafolium/gae/service/datastore"
 	"golang.org/x/net/context"
 )
 

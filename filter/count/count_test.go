@@ -8,6 +8,8 @@ import (
 	"fmt"
 	"testing"
 
+	. "github.com/luci/luci-go/common/testing/assertions"
+	. "github.com/smartystreets/goconvey/convey"
 	"github.com/tetrafolium/gae/filter/featureBreaker"
 	"github.com/tetrafolium/gae/impl/memory"
 	"github.com/tetrafolium/gae/service/datastore"
@@ -16,8 +18,6 @@ import (
 	"github.com/tetrafolium/gae/service/memcache"
 	"github.com/tetrafolium/gae/service/taskqueue"
 	"github.com/tetrafolium/gae/service/user"
-	. "github.com/luci/luci-go/common/testing/assertions"
-	. "github.com/smartystreets/goconvey/convey"
 	"golang.org/x/net/context"
 )
 

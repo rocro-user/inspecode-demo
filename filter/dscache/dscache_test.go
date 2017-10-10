@@ -12,15 +12,15 @@ import (
 	"testing"
 	"time"
 
+	"github.com/luci/luci-go/common/clock"
+	"github.com/luci/luci-go/common/clock/testclock"
+	"github.com/luci/luci-go/common/mathrand"
+	. "github.com/smartystreets/goconvey/convey"
 	"github.com/tetrafolium/gae/filter/featureBreaker"
 	"github.com/tetrafolium/gae/impl/memory"
 	"github.com/tetrafolium/gae/service/datastore"
 	"github.com/tetrafolium/gae/service/datastore/serialize"
 	"github.com/tetrafolium/gae/service/memcache"
-	"github.com/luci/luci-go/common/clock"
-	"github.com/luci/luci-go/common/clock/testclock"
-	"github.com/luci/luci-go/common/mathrand"
-	. "github.com/smartystreets/goconvey/convey"
 	"golang.org/x/net/context"
 )
 

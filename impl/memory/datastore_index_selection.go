@@ -10,9 +10,9 @@ import (
 	"sort"
 	"strings"
 
+	"github.com/luci/luci-go/common/stringset"
 	ds "github.com/tetrafolium/gae/service/datastore"
 	"github.com/tetrafolium/gae/service/datastore/serialize"
-	"github.com/luci/luci-go/common/stringset"
 )
 
 // ErrMissingIndex is returned when the current indexes are not sufficient

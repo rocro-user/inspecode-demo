@@ -7,6 +7,7 @@ package dummy
 import (
 	"testing"
 
+	. "github.com/smartystreets/goconvey/convey"
 	dsS "github.com/tetrafolium/gae/service/datastore"
 	infoS "github.com/tetrafolium/gae/service/info"
 	mailS "github.com/tetrafolium/gae/service/mail"
@@ -14,7 +15,6 @@ import (
 	modS "github.com/tetrafolium/gae/service/module"
 	tqS "github.com/tetrafolium/gae/service/taskqueue"
 	userS "github.com/tetrafolium/gae/service/user"
-	. "github.com/smartystreets/goconvey/convey"
 	"golang.org/x/net/context"
 )
 

@@ -8,10 +8,10 @@ import (
 	"bytes"
 	"sort"
 
+	"github.com/luci/luci-go/common/stringset"
 	"github.com/tetrafolium/gae/impl/memory"
 	ds "github.com/tetrafolium/gae/service/datastore"
 	"github.com/tetrafolium/gae/service/datastore/serialize"
-	"github.com/luci/luci-go/common/stringset"
 )
 
 // queryToIter takes a FinalizedQuery and returns an iterator function which
