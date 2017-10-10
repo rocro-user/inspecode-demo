@@ -60,29 +60,29 @@ var _ = math.Inf
 type Property_Meaning int32
 
 const (
-	Property_NO_MEANING       Property_Meaning = 0
-	Property_BLOB             Property_Meaning = 14
-	Property_TEXT             Property_Meaning = 15
-	Property_BYTESTRING       Property_Meaning = 16
-	Property_ATOM_CATEGORY    Property_Meaning = 1
-	Property_ATOM_LINK        Property_Meaning = 2
-	Property_ATOM_TITLE       Property_Meaning = 3
-	Property_ATOM_CONTENT     Property_Meaning = 4
-	Property_ATOM_SUMMARY     Property_Meaning = 5
-	Property_ATOM_AUTHOR      Property_Meaning = 6
-	Property_GD_WHEN          Property_Meaning = 7
-	Property_GD_EMAIL         Property_Meaning = 8
-	Property_GEORSS_POINT     Property_Meaning = 9
-	Property_GD_IM            Property_Meaning = 10
-	Property_GD_PHONENUMBER   Property_Meaning = 11
-	Property_GD_POSTALADDRESS Property_Meaning = 12
-	Property_GD_RATING        Property_Meaning = 13
-	Property_BLOBKEY          Property_Meaning = 17
-	Property_ENTITY_PROTO     Property_Meaning = 19
-	Property_INDEX_VALUE      Property_Meaning = 18
+	PropertyNOMEANING       Property_Meaning = 0
+	PropertyBLOB            Property_Meaning = 14
+	PropertyTEXT            Property_Meaning = 15
+	PropertyBYTESTRING      Property_Meaning = 16
+	PropertyATOMCATEGORY    Property_Meaning = 1
+	PropertyATOMLINK        Property_Meaning = 2
+	PropertyATOMTITLE       Property_Meaning = 3
+	PropertyATOMCONTENT     Property_Meaning = 4
+	PropertyATOMSUMMARY     Property_Meaning = 5
+	PropertyATOMAUTHOR      Property_Meaning = 6
+	PropertyGDWHEN          Property_Meaning = 7
+	PropertyGDEMAIL         Property_Meaning = 8
+	PropertyGEORSSPOINT     Property_Meaning = 9
+	PropertyGDIM            Property_Meaning = 10
+	PropertyGDPHONENUMBER   Property_Meaning = 11
+	PropertyGDPOSTALADDRESS Property_Meaning = 12
+	PropertyGDRATING        Property_Meaning = 13
+	PropertyBLOBKEY         Property_Meaning = 17
+	PropertyENTITYPROTO     Property_Meaning = 19
+	PropertyINDEXVALUE      Property_Meaning = 18
 )
 
-var Property_Meaning_name = map[int32]string{
+var PropertyMeaningName = map[int32]string{
 	0:  "NO_MEANING",
 	14: "BLOB",
 	15: "TEXT",
@@ -104,7 +104,7 @@ var Property_Meaning_name = map[int32]string{
 	19: "ENTITY_PROTO",
 	18: "INDEX_VALUE",
 }
-var Property_Meaning_value = map[string]int32{
+var PropertyMeaningValue = map[string]int32{
 	"NO_MEANING":       0,
 	"BLOB":             14,
 	"TEXT":             15,
@@ -133,10 +133,10 @@ func (x Property_Meaning) Enum() *Property_Meaning {
 	return p
 }
 func (x Property_Meaning) String() string {
-	return proto.EnumName(Property_Meaning_name, int32(x))
+	return proto.EnumName(PropertyMeaningName, int32(x))
 }
 func (x *Property_Meaning) UnmarshalJSON(data []byte) error {
-	value, err := proto.UnmarshalJSONEnum(Property_Meaning_value, data, "Property_Meaning")
+	value, err := proto.UnmarshalJSONEnum(PropertyMeaningValue, data, "Property_Meaning")
 	if err != nil {
 		return err
 	}
@@ -147,15 +147,15 @@ func (x *Property_Meaning) UnmarshalJSON(data []byte) error {
 type Property_FtsTokenizationOption int32
 
 const (
-	Property_HTML Property_FtsTokenizationOption = 1
-	Property_ATOM Property_FtsTokenizationOption = 2
+	PropertyHTML Property_FtsTokenizationOption = 1
+	PropertyATOM Property_FtsTokenizationOption = 2
 )
 
-var Property_FtsTokenizationOption_name = map[int32]string{
+var PropertyFtsTokenizationOptionName = map[int32]string{
 	1: "HTML",
 	2: "ATOM",
 }
-var Property_FtsTokenizationOption_value = map[string]int32{
+var PropertyFtsTokenizationOptionValue = map[string]int32{
 	"HTML": 1,
 	"ATOM": 2,
 }
@@ -166,10 +166,10 @@ func (x Property_FtsTokenizationOption) Enum() *Property_FtsTokenizationOption {
 	return p
 }
 func (x Property_FtsTokenizationOption) String() string {
-	return proto.EnumName(Property_FtsTokenizationOption_name, int32(x))
+	return proto.EnumName(PropertyFtsTokenizationOptionName, int32(x))
 }
 func (x *Property_FtsTokenizationOption) UnmarshalJSON(data []byte) error {
-	value, err := proto.UnmarshalJSONEnum(Property_FtsTokenizationOption_value, data, "Property_FtsTokenizationOption")
+	value, err := proto.UnmarshalJSONEnum(PropertyFtsTokenizationOptionValue, data, "Property_FtsTokenizationOption")
 	if err != nil {
 		return err
 	}
@@ -180,17 +180,17 @@ func (x *Property_FtsTokenizationOption) UnmarshalJSON(data []byte) error {
 type EntityProto_Kind int32
 
 const (
-	EntityProto_GD_CONTACT EntityProto_Kind = 1
-	EntityProto_GD_EVENT   EntityProto_Kind = 2
-	EntityProto_GD_MESSAGE EntityProto_Kind = 3
+	EntityProtoGDCONTACT EntityProto_Kind = 1
+	EntityProtoGDEVENT   EntityProto_Kind = 2
+	EntityProtoGDMESSAGE EntityProto_Kind = 3
 )
 
-var EntityProto_Kind_name = map[int32]string{
+var EntityProtoKindName = map[int32]string{
 	1: "GD_CONTACT",
 	2: "GD_EVENT",
 	3: "GD_MESSAGE",
 }
-var EntityProto_Kind_value = map[string]int32{
+var EntityProtoKindValue = map[string]int32{
 	"GD_CONTACT": 1,
 	"GD_EVENT":   2,
 	"GD_MESSAGE": 3,
@@ -202,10 +202,10 @@ func (x EntityProto_Kind) Enum() *EntityProto_Kind {
 	return p
 }
 func (x EntityProto_Kind) String() string {
-	return proto.EnumName(EntityProto_Kind_name, int32(x))
+	return proto.EnumName(EntityProtoKindName, int32(x))
 }
 func (x *EntityProto_Kind) UnmarshalJSON(data []byte) error {
-	value, err := proto.UnmarshalJSONEnum(EntityProto_Kind_value, data, "EntityProto_Kind")
+	value, err := proto.UnmarshalJSONEnum(EntityProtoKindValue, data, "EntityProto_Kind")
 	if err != nil {
 		return err
 	}
@@ -216,8 +216,8 @@ func (x *EntityProto_Kind) UnmarshalJSON(data []byte) error {
 type Index_Property_Direction int32
 
 const (
-	Index_Property_ASCENDING  Index_Property_Direction = 1
-	Index_Property_DESCENDING Index_Property_Direction = 2
+	IndexPropertyASCENDING  Index_Property_Direction = 1
+	IndexPropertyDESCENDING Index_Property_Direction = 2
 )
 
 var Index_Property_Direction_name = map[int32]string{
@@ -249,19 +249,19 @@ func (x *Index_Property_Direction) UnmarshalJSON(data []byte) error {
 type CompositeIndex_State int32
 
 const (
-	CompositeIndex_WRITE_ONLY CompositeIndex_State = 1
-	CompositeIndex_READ_WRITE CompositeIndex_State = 2
-	CompositeIndex_DELETED    CompositeIndex_State = 3
-	CompositeIndex_ERROR      CompositeIndex_State = 4
+	CompositeIndexWRITEONLY CompositeIndex_State = 1
+	CompositeIndexREADWRITE CompositeIndex_State = 2
+	CompositeIndexDELETED   CompositeIndex_State = 3
+	CompositeIndexERROR     CompositeIndex_State = 4
 )
 
-var CompositeIndex_State_name = map[int32]string{
+var CompositeIndexStateName = map[int32]string{
 	1: "WRITE_ONLY",
 	2: "READ_WRITE",
 	3: "DELETED",
 	4: "ERROR",
 }
-var CompositeIndex_State_value = map[string]int32{
+var CompositeIndexStateValue = map[string]int32{
 	"WRITE_ONLY": 1,
 	"READ_WRITE": 2,
 	"DELETED":    3,
@@ -274,10 +274,10 @@ func (x CompositeIndex_State) Enum() *CompositeIndex_State {
 	return p
 }
 func (x CompositeIndex_State) String() string {
-	return proto.EnumName(CompositeIndex_State_name, int32(x))
+	return proto.EnumName(CompositeIndexStateName, int32(x))
 }
 func (x *CompositeIndex_State) UnmarshalJSON(data []byte) error {
-	value, err := proto.UnmarshalJSONEnum(CompositeIndex_State_value, data, "CompositeIndex_State")
+	value, err := proto.UnmarshalJSONEnum(CompositeIndexStateValue, data, "CompositeIndex_State")
 	if err != nil {
 		return err
 	}
@@ -288,15 +288,15 @@ func (x *CompositeIndex_State) UnmarshalJSON(data []byte) error {
 type Snapshot_Status int32
 
 const (
-	Snapshot_INACTIVE Snapshot_Status = 0
-	Snapshot_ACTIVE   Snapshot_Status = 1
+	SnapshotINACTIVE Snapshot_Status = 0
+	SnapshotACTIVE   Snapshot_Status = 1
 )
 
-var Snapshot_Status_name = map[int32]string{
+var SnapshotStatusName = map[int32]string{
 	0: "INACTIVE",
 	1: "ACTIVE",
 }
-var Snapshot_Status_value = map[string]int32{
+var SnapshotStatusValue = map[string]int32{
 	"INACTIVE": 0,
 	"ACTIVE":   1,
 }
@@ -307,10 +307,10 @@ func (x Snapshot_Status) Enum() *Snapshot_Status {
 	return p
 }
 func (x Snapshot_Status) String() string {
-	return proto.EnumName(Snapshot_Status_name, int32(x))
+	return proto.EnumName(SnapshotStatusName, int32(x))
 }
 func (x *Snapshot_Status) UnmarshalJSON(data []byte) error {
-	value, err := proto.UnmarshalJSONEnum(Snapshot_Status_value, data, "Snapshot_Status")
+	value, err := proto.UnmarshalJSONEnum(SnapshotStatusValue, data, "Snapshot_Status")
 	if err != nil {
 		return err
 	}
@@ -321,9 +321,9 @@ func (x *Snapshot_Status) UnmarshalJSON(data []byte) error {
 type Query_Hint int32
 
 const (
-	Query_ORDER_FIRST    Query_Hint = 1
-	Query_ANCESTOR_FIRST Query_Hint = 2
-	Query_FILTER_FIRST   Query_Hint = 3
+	QueryORDERFIRST    Query_Hint = 1
+	QueryANCESTORFIRST Query_Hint = 2
+	QueryFILTERFIRST   Query_Hint = 3
 )
 
 var Query_Hint_name = map[int32]string{
@@ -357,13 +357,13 @@ func (x *Query_Hint) UnmarshalJSON(data []byte) error {
 type Query_Filter_Operator int32
 
 const (
-	Query_Filter_LESS_THAN             Query_Filter_Operator = 1
-	Query_Filter_LESS_THAN_OR_EQUAL    Query_Filter_Operator = 2
-	Query_Filter_GREATER_THAN          Query_Filter_Operator = 3
-	Query_Filter_GREATER_THAN_OR_EQUAL Query_Filter_Operator = 4
-	Query_Filter_EQUAL                 Query_Filter_Operator = 5
-	Query_Filter_IN                    Query_Filter_Operator = 6
-	Query_Filter_EXISTS                Query_Filter_Operator = 7
+	QueryFilterLESSTHAN           Query_Filter_Operator = 1
+	QueryFilterLESSTHANOREQUAL    Query_Filter_Operator = 2
+	QueryFilterGREATERTHAN        Query_Filter_Operator = 3
+	QueryFilterGREATERTHANOREQUAL Query_Filter_Operator = 4
+	QueryFilterEQUAL              Query_Filter_Operator = 5
+	QueryFilterIN                 Query_Filter_Operator = 6
+	QueryFilterEXISTS             Query_Filter_Operator = 7
 )
 
 var Query_Filter_Operator_name = map[int32]string{
@@ -438,20 +438,20 @@ func (x *Query_Order_Direction) UnmarshalJSON(data []byte) error {
 type Error_ErrorCode int32
 
 const (
-	Error_BAD_REQUEST                  Error_ErrorCode = 1
-	Error_CONCURRENT_TRANSACTION       Error_ErrorCode = 2
-	Error_INTERNAL_ERROR               Error_ErrorCode = 3
-	Error_NEED_INDEX                   Error_ErrorCode = 4
-	Error_TIMEOUT                      Error_ErrorCode = 5
-	Error_PERMISSION_DENIED            Error_ErrorCode = 6
-	Error_BIGTABLE_ERROR               Error_ErrorCode = 7
-	Error_COMMITTED_BUT_STILL_APPLYING Error_ErrorCode = 8
-	Error_CAPABILITY_DISABLED          Error_ErrorCode = 9
-	Error_TRY_ALTERNATE_BACKEND        Error_ErrorCode = 10
-	Error_SAFE_TIME_TOO_OLD            Error_ErrorCode = 11
+	ErrorBADREQUEST                Error_ErrorCode = 1
+	ErrorCONCURRENTTRANSACTION     Error_ErrorCode = 2
+	ErrorINTERNALERROR             Error_ErrorCode = 3
+	ErrorNEEDINDEX                 Error_ErrorCode = 4
+	ErrorTIMEOUT                   Error_ErrorCode = 5
+	ErrorPERMISSIONDENIED          Error_ErrorCode = 6
+	ErrorBIGTABLEERROR             Error_ErrorCode = 7
+	ErrorCOMMITTEDBUTSTILLAPPLYING Error_ErrorCode = 8
+	ErrorCAPABILITYDISABLED        Error_ErrorCode = 9
+	ErrorTRYALTERNATEBACKEND       Error_ErrorCode = 10
+	ErrorSAFETIMETOOOLD            Error_ErrorCode = 11
 )
 
-var Error_ErrorCode_name = map[int32]string{
+var ErrorErrorCodeName = map[int32]string{
 	1:  "BAD_REQUEST",
 	2:  "CONCURRENT_TRANSACTION",
 	3:  "INTERNAL_ERROR",
@@ -464,7 +464,7 @@ var Error_ErrorCode_name = map[int32]string{
 	10: "TRY_ALTERNATE_BACKEND",
 	11: "SAFE_TIME_TOO_OLD",
 }
-var Error_ErrorCode_value = map[string]int32{
+var ErrorErrorCodeValue = map[string]int32{
 	"BAD_REQUEST":                  1,
 	"CONCURRENT_TRANSACTION":       2,
 	"INTERNAL_ERROR":               3,
@@ -484,10 +484,10 @@ func (x Error_ErrorCode) Enum() *Error_ErrorCode {
 	return p
 }
 func (x Error_ErrorCode) String() string {
-	return proto.EnumName(Error_ErrorCode_name, int32(x))
+	return proto.EnumName(ErrorErrorCodeName, int32(x))
 }
 func (x *Error_ErrorCode) UnmarshalJSON(data []byte) error {
-	value, err := proto.UnmarshalJSONEnum(Error_ErrorCode_value, data, "Error_ErrorCode")
+	value, err := proto.UnmarshalJSONEnum(ErrorErrorCodeValue, data, "Error_ErrorCode")
 	if err != nil {
 		return err
 	}
@@ -498,7 +498,7 @@ func (x *Error_ErrorCode) UnmarshalJSON(data []byte) error {
 type PutRequest_AutoIdPolicy int32
 
 const (
-	PutRequest_CURRENT    PutRequest_AutoIdPolicy = 0
+	PutRequestCURRENT     PutRequest_AutoIdPolicy = 0
 	PutRequest_SEQUENTIAL PutRequest_AutoIdPolicy = 1
 )
 
@@ -754,15 +754,15 @@ func (m *Property) Reset()         { *m = Property{} }
 func (m *Property) String() string { return proto.CompactTextString(m) }
 func (*Property) ProtoMessage()    {}
 
-const Default_Property_Meaning Property_Meaning = Property_NO_MEANING
-const Default_Property_Searchable bool = false
-const Default_Property_Locale string = "en"
+const DefaultPropertyMeaning Property_Meaning = PropertyNOMEANING
+const DefaultPropertySearchable bool = false
+const DefaultPropertyLocale string = "en"
 
 func (m *Property) GetMeaning() Property_Meaning {
 	if m != nil && m.Meaning != nil {
 		return *m.Meaning
 	}
-	return Default_Property_Meaning
+	return DefaultPropertyMeaning
 }
 
 func (m *Property) GetMeaningUri() string {
@@ -797,21 +797,21 @@ func (m *Property) GetSearchable() bool {
 	if m != nil && m.Searchable != nil {
 		return *m.Searchable
 	}
-	return Default_Property_Searchable
+	return DefaultPropertySearchable
 }
 
 func (m *Property) GetFtsTokenizationOption() Property_FtsTokenizationOption {
 	if m != nil && m.FtsTokenizationOption != nil {
 		return *m.FtsTokenizationOption
 	}
-	return Property_HTML
+	return PropertyHTML
 }
 
 func (m *Property) GetLocale() string {
 	if m != nil && m.Locale != nil {
 		return *m.Locale
 	}
-	return Default_Property_Locale
+	return DefaultPropertyLocale
 }
 
 type Path struct {
@@ -983,7 +983,7 @@ func (m *EntityProto) GetKind() EntityProto_Kind {
 	if m != nil && m.Kind != nil {
 		return *m.Kind
 	}
-	return EntityProto_GD_CONTACT
+	return EntityProtoGDCONTACT
 }
 
 func (m *EntityProto) GetKindUri() string {
@@ -1080,7 +1080,7 @@ func (m *Index_Property) Reset()         { *m = Index_Property{} }
 func (m *Index_Property) String() string { return proto.CompactTextString(m) }
 func (*Index_Property) ProtoMessage()    {}
 
-const Default_Index_Property_Direction Index_Property_Direction = Index_Property_ASCENDING
+const DefaultIndexPropertyDirection Index_Property_Direction = IndexPropertyASCENDING
 
 func (m *Index_Property) GetName() string {
 	if m != nil && m.Name != nil {
@@ -1093,7 +1093,7 @@ func (m *Index_Property) GetDirection() Index_Property_Direction {
 	if m != nil && m.Direction != nil {
 		return *m.Direction
 	}
-	return Default_Index_Property_Direction
+	return DefaultIndexPropertyDirection
 }
 
 type CompositeIndex struct {
@@ -1109,7 +1109,7 @@ func (m *CompositeIndex) Reset()         { *m = CompositeIndex{} }
 func (m *CompositeIndex) String() string { return proto.CompactTextString(m) }
 func (*CompositeIndex) ProtoMessage()    {}
 
-const Default_CompositeIndex_OnlyUseIfRequired bool = false
+const DefaultCompositeIndexOnlyUseIfRequired bool = false
 
 func (m *CompositeIndex) GetAppId() string {
 	if m != nil && m.AppId != nil {
@@ -1136,14 +1136,14 @@ func (m *CompositeIndex) GetState() CompositeIndex_State {
 	if m != nil && m.State != nil {
 		return *m.State
 	}
-	return CompositeIndex_WRITE_ONLY
+	return CompositeIndexWRITEONLY
 }
 
 func (m *CompositeIndex) GetOnlyUseIfRequired() bool {
 	if m != nil && m.OnlyUseIfRequired != nil {
 		return *m.OnlyUseIfRequired
 	}
-	return Default_CompositeIndex_OnlyUseIfRequired
+	return DefaultCompositeIndexOnlyUseIfRequired
 }
 
 type IndexPostfix struct {
@@ -1339,11 +1339,11 @@ func (m *Query) Reset()         { *m = Query{} }
 func (m *Query) String() string { return proto.CompactTextString(m) }
 func (*Query) ProtoMessage()    {}
 
-const Default_Query_Offset int32 = 0
-const Default_Query_RequirePerfectPlan bool = false
-const Default_Query_KeysOnly bool = false
-const Default_Query_Compile bool = false
-const Default_Query_PersistOffset bool = false
+const DefaultQueryOffset int32 = 0
+const DefaultQueryRequirePerfectPlan bool = false
+const DefaultQueryKeysOnly bool = false
+const DefaultQueryCompile bool = false
+const DefaultQueryPersistOffset bool = false
 
 func (m *Query) GetHeader() *InternalHeader {
 	if m != nil {
@@ -1405,7 +1405,7 @@ func (m *Query) GetHint() Query_Hint {
 	if m != nil && m.Hint != nil {
 		return *m.Hint
 	}
-	return Query_ORDER_FIRST
+	return QueryORDERFIRST
 }
 
 func (m *Query) GetCount() int32 {
@@ -1419,7 +1419,7 @@ func (m *Query) GetOffset() int32 {
 	if m != nil && m.Offset != nil {
 		return *m.Offset
 	}
-	return Default_Query_Offset
+	return DefaultQueryOffset
 }
 
 func (m *Query) GetLimit() int32 {
@@ -1454,14 +1454,14 @@ func (m *Query) GetRequirePerfectPlan() bool {
 	if m != nil && m.RequirePerfectPlan != nil {
 		return *m.RequirePerfectPlan
 	}
-	return Default_Query_RequirePerfectPlan
+	return DefaultQueryRequirePerfectPlan
 }
 
 func (m *Query) GetKeysOnly() bool {
 	if m != nil && m.KeysOnly != nil {
 		return *m.KeysOnly
 	}
-	return Default_Query_KeysOnly
+	return DefaultQueryKeysOnly
 }
 
 func (m *Query) GetTransaction() *Transaction {
@@ -1475,7 +1475,7 @@ func (m *Query) GetCompile() bool {
 	if m != nil && m.Compile != nil {
 		return *m.Compile
 	}
-	return Default_Query_Compile
+	return DefaultQueryCompile
 }
 
 func (m *Query) GetFailoverMs() int64 {
@@ -1531,7 +1531,7 @@ func (m *Query) GetPersistOffset() bool {
 	if m != nil && m.PersistOffset != nil {
 		return *m.PersistOffset
 	}
-	return Default_Query_PersistOffset
+	return DefaultQueryPersistOffset
 }
 
 type Query_Filter struct {
@@ -1548,7 +1548,7 @@ func (m *Query_Filter) GetOp() Query_Filter_Operator {
 	if m != nil && m.Op != nil {
 		return *m.Op
 	}
-	return Query_Filter_LESS_THAN
+	return QueryFilterLESSTHAN
 }
 
 func (m *Query_Filter) GetProperty() []*Property {
@@ -2149,10 +2149,10 @@ func (m *PutRequest) Reset()         { *m = PutRequest{} }
 func (m *PutRequest) String() string { return proto.CompactTextString(m) }
 func (*PutRequest) ProtoMessage()    {}
 
-const Default_PutRequest_Trusted bool = false
-const Default_PutRequest_Force bool = false
-const Default_PutRequest_MarkChanges bool = false
-const Default_PutRequest_AutoIdPolicy PutRequest_AutoIdPolicy = PutRequest_CURRENT
+const DefaultPutRequestTrusted bool = false
+const DefaultPutRequestForce bool = false
+const DefaultPutRequestMarkChanges bool = false
+const DefaultPutRequestAutoIdPolicy PutRequest_AutoIdPolicy = PutRequestCURRENT
 
 func (m *PutRequest) GetHeader() *InternalHeader {
 	if m != nil {
@@ -2186,21 +2186,21 @@ func (m *PutRequest) GetTrusted() bool {
 	if m != nil && m.Trusted != nil {
 		return *m.Trusted
 	}
-	return Default_PutRequest_Trusted
+	return DefaultPutRequestTrusted
 }
 
 func (m *PutRequest) GetForce() bool {
 	if m != nil && m.Force != nil {
 		return *m.Force
 	}
-	return Default_PutRequest_Force
+	return DefaultPutRequestForce
 }
 
 func (m *PutRequest) GetMarkChanges() bool {
 	if m != nil && m.MarkChanges != nil {
 		return *m.MarkChanges
 	}
-	return Default_PutRequest_MarkChanges
+	return DefaultPutRequestMarkChanges
 }
 
 func (m *PutRequest) GetSnapshot() []*Snapshot {
@@ -2214,7 +2214,7 @@ func (m *PutRequest) GetAutoIdPolicy() PutRequest_AutoIdPolicy {
 	if m != nil && m.AutoIdPolicy != nil {
 		return *m.AutoIdPolicy
 	}
-	return Default_PutRequest_AutoIdPolicy
+	return DefaultPutRequestAutoIdPolicy
 }
 
 type PutResponse struct {
