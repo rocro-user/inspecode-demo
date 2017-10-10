@@ -3,5 +3,4 @@ inspecode:
   gofmt: auto-fix
   golint: auto-fix
   govet: default
-  gosimple: default
-
+  gosimple: auto-fix
