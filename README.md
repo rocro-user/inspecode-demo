@@ -5,6 +5,7 @@ gae: A Google AppEngine SDK wrapper
 #### **THIS PACKAGE HAS NO API COMPATIBILITY GUARANTEES. USE UNPINNED AT YOUR OWN PERIL.**
 (but generally it should be pretty stableish).
 
+[![Job Status](https://inspecode.rocro.com/badges/github.com/rocro-user/inspecode-demo/status?token=010HXNGRitKu48yelA_8yUre-RqMHd7vDtnoXgWVqic&branch=master)](https://inspecode.rocro.com/jobs/github.com/rocro-user/inspecode-demo/latest?completed=true&branch=master)
 [![GoDoc](https://godoc.org/github.com/tetrafolium/gae?status.svg)](https://godoc.org/github.com/tetrafolium/gae)
 [![Build Status](https://travis-ci.org/luci/gae.svg?branch=master)](https://travis-ci.org/luci/gae)
 [![Coverage Status](https://coveralls.io/repos/luci/gae/badge.svg?branch=master&service=github)](https://coveralls.io/github/luci/gae?branch=master)
