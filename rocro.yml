@@ -1,0 +1,7 @@
+inspecode:
+  goimports: auto-fix
+  gofmt: auto-fix
+  golint: auto-fix
+  govet: default
+  gosimple: default
+
