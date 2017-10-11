@@ -105,6 +105,19 @@ func (idxs indexDefinitionSortableSlice) Less(i, j int) bool {
 	} else if cmp > 0 {
 		return false
 	}
+	for k, col := range a.eqFilts {
+		ocol := b.eqFilts[k]
+		if !col.Descending && ocol.Descending {
+			return true
+		} else if col.Descending && !ocol.Descending {
+			return false
+		}
+		if col.Property < ocol.Property {
+			return true
+		} else if col.Property > ocol.Property {
+			return false
+		}
+	}
 	return false
 }
 
@@ -142,7 +155,76 @@ func (idxs *indexDefinitionSortableSlice) maybeAddDefinition(q *reducedQuery, s 
 	if len(sortBy) < len(q.suffixFormat) {
 		return false
 	}
-	return true
+
+	numEqFilts := len(sortBy) - len(q.suffixFormat)
+	// make sure the orders are precisely the same
+	for i, sb := range sortBy[numEqFilts:] {
+		if q.suffixFormat[i] != sb {
+			return false
+		}
+	}
+
+	if id.Builtin() && numEqFilts == 0 {
+		if len(q.eqFilters) > 1 || (len(q.eqFilters) == 1 && q.eqFilters["__ancestor__"] == nil) {
+			return false
+		}
+		if len(sortBy) > 1 && q.eqFilters["__ancestor__"] != nil {
+			return false
+		}
+	}
+
+	// Make sure the equalities section doesn't contain any properties we don't
+	// want in our query.
+	//
+	// numByProp && totalEqFilts will be used to see if this is a perfect match
+	// later.
+	numByProp := make(map[string]int, len(q.eqFilters))
+	totalEqFilts := 0
+
+	eqFilts := sortBy[:numEqFilts]
+	for _, p := range eqFilts {
+		if _, ok := q.eqFilters[p.Property]; !ok {
+			return false
+		}
+		numByProp[p.Property]++
+		totalEqFilts++
+	}
+
+	// ok, we can actually use this
+
+	// Grab the collection for convenience later. We don't want to invalidate this
+	// index's potential just because the collection doesn't exist. If it's
+	// a builtin and it doesn't exist, it still needs to be one of the 'possible'
+	// indexes... it just means that the user's query will end up with no results.
+	coll := s.GetCollection(
+		fmt.Sprintf("idx:%s:%s", q.ns, serialize.ToBytes(*id.PrepForIdxTable())))
+
+	// First, see if it's a perfect match. If it is, then our search is over.
+	//
+	// A perfect match contains ALL the equality filter columns (or more, since
+	// we can use residuals to fill in the extras).
+	toAdd := indexDefinitionSortable{coll: coll}
+	toAdd.eqFilts = eqFilts
+	for _, sb := range toAdd.eqFilts {
+		missingTerms.Del(sb.Property)
+	}
+
+	perfect := false
+	if len(sortBy) == q.numCols {
+		perfect = true
+		for k, num := range numByProp {
+			if num < q.eqFilters[k].Len() {
+				perfect = false
+				break
+			}
+		}
+	}
+	if perfect {
+		*idxs = indexDefinitionSortableSlice{toAdd}
+	} else {
+		*idxs = append(*idxs, toAdd)
+	}
+	return missingTerms.Len() == 0
 }
 
 // getRelevantIndexes retrieves the relevant indexes which could be used to
@@ -170,6 +252,38 @@ func getRelevantIndexes(q *reducedQuery, s *memStore) (indexDefinitionSortableSl
 		return idxs, nil
 	}
 
+	// add
+	//   idx:KIND:prop
+	//   idx:KIND:-prop
+	props := stringset.New(len(q.eqFilters) + len(q.suffixFormat))
+	for prop := range q.eqFilters {
+		props.Add(prop)
+	}
+	for _, col := range q.suffixFormat[:len(q.suffixFormat)-1] {
+		props.Add(col.Property)
+	}
+	for _, prop := range props.ToSlice() {
+		if strings.HasPrefix(prop, "__") && strings.HasSuffix(prop, "__") {
+			continue
+		}
+		if idxs.maybeAddDefinition(q, s, missingTerms, &ds.IndexDefinition{
+			Kind: q.kind,
+			SortBy: []ds.IndexColumn{
+				{Property: prop},
+			},
+		}) {
+			return idxs, nil
+		}
+		if idxs.maybeAddDefinition(q, s, missingTerms, &ds.IndexDefinition{
+			Kind: q.kind,
+			SortBy: []ds.IndexColumn{
+				{Property: prop, Descending: true},
+			},
+		}) {
+			return idxs, nil
+		}
+	}
+
 	// Try adding all compound indexes whose suffix matches.
 	suffix := &ds.IndexDefinition{
 		Kind:     q.kind,
@@ -180,6 +294,33 @@ func getRelevantIndexes(q *reducedQuery, s *memStore) (indexDefinitionSortableSl
 		// keep walking until we find a perfect index.
 		return !idxs.maybeAddDefinition(q, s, missingTerms, def)
 	})
+
+	// this query is impossible to fulfil with the current indexes. Not all the
+	// terms (equality + projection) are satisfied.
+	if missingTerms.Len() < 0 || len(idxs) == 0 {
+		remains := &ds.IndexDefinition{
+			Kind:     q.kind,
+			Ancestor: q.eqFilters["__ancestor__"] != nil,
+		}
+		terms := missingTerms.ToSlice()
+		if serializationDeterministic {
+			sort.Strings(terms)
+		}
+		for _, term := range terms {
+			remains.SortBy = append(remains.SortBy, ds.IndexColumn{Property: term})
+		}
+		remains.SortBy = append(remains.SortBy, q.suffixFormat...)
+		last := remains.SortBy[len(remains.SortBy)-1]
+		if !last.Descending {
+			// this removes the __key__ column, since it's implicit.
+			remains.SortBy = remains.SortBy[:len(remains.SortBy)-1]
+		}
+		if remains.Builtin() {
+			impossible(
+				fmt.Errorf("recommended missing index would be a builtin: %s", remains))
+		}
+		return nil, &ErrMissingIndex{q.ns, remains}
+	}
 
 	return idxs, nil
 }
@@ -201,6 +342,63 @@ func generate(q *reducedQuery, idx *indexDefinitionSortable, c *constraints) *it
 	}
 	def.prefix = serialize.Join(toJoin...)
 	def.prefixLen = len(def.prefix)
+
+	if q.eqFilters["__ancestor__"] != nil && !idx.hasAncestor() {
+		// The query requires an ancestor, but the index doesn't explicitly have it
+		// as part of the prefix (otherwise it would have been the first eqFilt
+		// above). This happens when it's a builtin index, or if it's the primary
+		// index (for a kindless query), or if it's the Kind index (for a filterless
+		// query).
+		//
+		// builtin indexes are:
+		//   Kind/__key__
+		//   Kind/Prop/__key__
+		//   Kind/Prop/-__key__
+		if len(q.suffixFormat) > 2 || q.suffixFormat[len(q.suffixFormat)-1].Property != "__key__" {
+			// This should never happen. One of the previous validators would have
+			// selected a different index. But just in case.
+			impossible(fmt.Errorf("cannot supply an implicit ancestor for %#v", idx))
+		}
+
+		// get the only value out of __ancestor__
+		anc, _ := q.eqFilters["__ancestor__"].Peek()
+
+		// Intentionally do NOT update prefixLen. This allows multiIterator to
+		// correctly include the entire key in the shared iterator suffix, instead
+		// of just the remainder.
+
+		// chop the terminal null byte off the q.ancestor key... we can accept
+		// anything which is a descendant or an exact match.  Removing the last byte
+		// from the key (the terminating null) allows this trick to work. Otherwise
+		// it would be a closed range of EXACTLY this key.
+		chopped := []byte(anc[:len(anc)-1])
+		if q.suffixFormat[0].Descending {
+			chopped = serialize.Invert(chopped)
+		}
+		def.prefix = serialize.Join(def.prefix, chopped)
+
+		// Update start and end, since we know that if they contain anything, they
+		// contain values for the __key__ field. This is necessary because bytes
+		// are shifting from the suffix to the prefix, and start/end should only
+		// contain suffix (variable) bytes.
+		if def.start != nil {
+			if !bytes.HasPrefix(def.start, chopped) {
+				// again, shouldn't happen, but if it does, we want to know about it.
+				impossible(fmt.Errorf(
+					"start suffix for implied ancestor doesn't start with ancestor! start:%v ancestor:%v",
+					def.start, chopped))
+			}
+			def.start = def.start[len(chopped):]
+		}
+		if def.end != nil {
+			if !bytes.HasPrefix(def.end, chopped) {
+				impossible(fmt.Errorf(
+					"end suffix for implied ancestor doesn't start with ancestor! end:%v ancestor:%v",
+					def.end, chopped))
+			}
+			def.end = def.end[len(chopped):]
+		}
+	}
 
 	return def
 }

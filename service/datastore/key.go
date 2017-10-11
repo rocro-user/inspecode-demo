@@ -113,6 +113,14 @@ func NewKey(aid, ns, kind, stringID string, intID int64, parent *Key) *Key {
 // See Interface.MakeKey for a version of this function which automatically
 // provides aid and ns.
 func MakeKey(aid, ns string, elems ...interface{}) *Key {
+	if len(elems) == 0 {
+		return nil
+	}
+
+	if len(elems)%2 != 0 {
+		panic(fmt.Errorf("datastore.MakeKey: odd number of tokens: %v", elems))
+	}
+
 	toks := make([]KeyTok, len(elems)/2)
 	for i := 0; len(elems) > 0; i, elems = i+1, elems[2:] {
 		knd, ok := elems[0].(string)
@@ -124,6 +132,12 @@ func MakeKey(aid, ns string, elems ...interface{}) *Key {
 		switch x := elems[1].(type) {
 		case string:
 			t.StringID = x
+		case int:
+			t.IntID = int64(x)
+		case int32:
+			t.IntID = int64(x)
+		case int64:
+			t.IntID = int64(x)
 		default:
 			panic(fmt.Errorf("datastore.MakeKey: bad id: %v", x))
 		}
@@ -211,11 +225,20 @@ func (k *Key) Incomplete() bool {
 //     - token is not incomplete
 //   - all tokens have the same namespace and appid
 func (k *Key) Valid(allowSpecial bool, aid, ns string) bool {
-	if aid != k.appID {
+	if aid != k.appID || ns != k.namespace {
 		return false
 	}
 	for _, t := range k.toks {
 		if t.Incomplete() {
+			return false
+		}
+		if !allowSpecial && t.Special() {
+			return false
+		}
+		if t.Kind == "" {
+			return false
+		}
+		if t.StringID != "" && t.IntID != 0 {
 			return false
 		}
 	}

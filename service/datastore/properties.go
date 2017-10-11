@@ -221,6 +221,34 @@ func PropertyTypeOf(v interface{}, checkValid bool) (PropertyType, error) {
 		return PTNull, nil
 	case int64:
 		return PTInt, nil
+	case float64:
+		return PTFloat, nil
+	case bool:
+		return PTBool, nil
+	case []byte:
+		return PTBytes, nil
+	case blobstore.Key:
+		return PTBlobKey, nil
+	case string:
+		return PTString, nil
+	case *Key:
+		// TODO(riannucci): Check key for validity in its own namespace?
+		return PTKey, nil
+	case time.Time:
+		err := error(nil)
+		if checkValid && (x.Before(minTime) || x.After(maxTime)) {
+			err = errors.New("time value out of range")
+		}
+		if checkValid && !timeLocationIsUTC(x.Location()) {
+			err = fmt.Errorf("time value has wrong Location: %v", x.Location())
+		}
+		return PTTime, err
+	case GeoPoint:
+		err := error(nil)
+		if checkValid && !x.Valid() {
+			err = errors.New("invalid GeoPoint value")
+		}
+		return PTGeoPoint, err
 	default:
 		return PTUnknown, fmt.Errorf("gae: Property has bad type %T", v)
 	}
@@ -274,11 +302,28 @@ func UpconvertUnderlyingType(o interface{}) interface{} {
 	v := reflect.ValueOf(o)
 	t := v.Type()
 	switch v.Kind() {
+	case reflect.Int, reflect.Int8, reflect.Int16, reflect.Int32, reflect.Int64:
+		o = v.Int()
+	case reflect.Uint8, reflect.Uint16, reflect.Uint32:
+		o = int64(v.Uint())
+	case reflect.Bool:
+		o = v.Bool()
+	case reflect.String:
+		if t != typeOfBSKey {
+			o = v.String()
+		}
 	case reflect.Float32, reflect.Float64:
 		o = v.Float()
 	case reflect.Slice:
 		if t.Elem().Kind() == reflect.Uint8 {
 			o = v.Bytes()
+		}
+	case reflect.Struct:
+		if t == typeOfTime {
+			tim := v.Interface().(time.Time)
+			if !tim.IsZero() {
+				o = RoundTime(v.Interface().(time.Time))
+			}
 		}
 	}
 
@@ -529,6 +574,40 @@ func (p *Property) Compare(other *Property) int {
 			return 0
 		}
 		if a && !b {
+			return 1
+		}
+		return -1
+
+	case PTInt:
+		a, b := av.(int64), bv.(int64)
+		if a == b {
+			return 0
+		}
+		if a > b {
+			return 1
+		}
+		return -1
+
+	case PTString:
+		return cmpByteSequence(p.value.(byteSequence), other.value.(byteSequence))
+
+	case PTFloat:
+		return cmpFloat(av.(float64), bv.(float64))
+
+	case PTGeoPoint:
+		a, b := av.(GeoPoint), bv.(GeoPoint)
+		cmp := cmpFloat(a.Lat, b.Lat)
+		if cmp != 0 {
+			return cmp
+		}
+		return cmpFloat(a.Lng, b.Lng)
+
+	case PTKey:
+		a, b := av.(*Key), bv.(*Key)
+		if a.Equal(b) {
+			return 0
+		}
+		if b.Less(a) {
 			return 1
 		}
 		return -1

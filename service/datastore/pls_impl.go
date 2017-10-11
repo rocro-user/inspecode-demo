@@ -63,21 +63,33 @@ func (p *structPLS) Load(propMap PropertyMap) error {
 	if i, ok := p.c.bySpecial["extra"]; ok {
 		useExtra = true
 		f := p.c.byIndex[i]
-		extra = p.o.Field(i).Addr().Interface().(*PropertyMap)
+		if f.canSet {
+			extra = p.o.Field(i).Addr().Interface().(*PropertyMap)
+		}
 	}
 	t := reflect.Type(nil)
 	for name, props := range propMap {
 		multiple := len(props) > 1
 		for i, prop := range props {
 			if reason := loadInner(p.c, p.o, i, name, prop, multiple); reason != "" {
-				if t == nil {
-					t = p.o.Type()
+				if useExtra {
+					if extra != nil {
+						if *extra == nil {
+							*extra = make(PropertyMap, 1)
+						}
+						(*extra)[name] = props
+					}
+					break // go to the next property in propMap
+				} else {
+					if t == nil {
+						t = p.o.Type()
+					}
+					convFailures = append(convFailures, &ErrFieldMismatch{
+						StructType: t,
+						FieldName:  name,
+						Reason:     reason,
+					})
 				}
-				convFailures = append(convFailures, &ErrFieldMismatch{
-					StructType: t,
-					FieldName:  name,
-					Reason:     reason,
-				})
 			}
 		}
 	}
@@ -104,6 +116,15 @@ func loadInner(codec *structCodec, structValue reflect.Value, index int, name st
 			break
 		}
 
+		if v.Kind() == reflect.Slice {
+			for v.Len() <= index {
+				v.Set(reflect.Append(v, reflect.New(v.Type().Elem()).Elem()))
+			}
+			structValue = v.Index(index)
+			requireSlice = false
+		} else {
+			structValue = v
+		}
 		// Strip the "I." from "I.X".
 		name = name[len(st.name):]
 		codec = st.substructCodec
@@ -125,6 +146,86 @@ func loadInner(codec *structCodec, structValue reflect.Value, index int, name st
 		return ret
 	}
 
+	var slice reflect.Value
+	if v.Kind() == reflect.Slice && v.Type().Elem().Kind() != reflect.Uint8 {
+		slice = v
+		v = reflect.New(v.Type().Elem()).Elem()
+	} else if requireSlice {
+		return "multiple-valued property requires a slice field type"
+	}
+
+	if ret, ok := doConversion(v); ok {
+		if ret != "" {
+			return ret
+		}
+	} else {
+		knd := v.Kind()
+
+		project := PTNull
+		overflow := (func(interface{}) bool)(nil)
+		set := (func(interface{}))(nil)
+
+		switch knd {
+		case reflect.Int, reflect.Int8, reflect.Int16, reflect.Int32, reflect.Int64:
+			project = PTInt
+			overflow = func(x interface{}) bool { return v.OverflowInt(x.(int64)) }
+			set = func(x interface{}) { v.SetInt(x.(int64)) }
+		case reflect.Uint8, reflect.Uint16, reflect.Uint32:
+			project = PTInt
+			overflow = func(x interface{}) bool {
+				xi := x.(int64)
+				return xi < 0 || v.OverflowUint(uint64(xi))
+			}
+			set = func(x interface{}) { v.SetUint(uint64(x.(int64))) }
+		case reflect.Bool:
+			project = PTBool
+			set = func(x interface{}) { v.SetBool(x.(bool)) }
+		case reflect.String:
+			project = PTString
+			set = func(x interface{}) { v.SetString(x.(string)) }
+		case reflect.Float32, reflect.Float64:
+			project = PTFloat
+			overflow = func(x interface{}) bool { return v.OverflowFloat(x.(float64)) }
+			set = func(x interface{}) { v.SetFloat(x.(float64)) }
+		case reflect.Ptr:
+			project = PTKey
+			set = func(x interface{}) {
+				if k, ok := x.(*Key); ok {
+					v.Set(reflect.ValueOf(k))
+				}
+			}
+		case reflect.Struct:
+			switch v.Type() {
+			case typeOfTime:
+				project = PTTime
+				set = func(x interface{}) { v.Set(reflect.ValueOf(x)) }
+			case typeOfGeoPoint:
+				project = PTGeoPoint
+				set = func(x interface{}) { v.Set(reflect.ValueOf(x)) }
+			default:
+				panic(fmt.Errorf("helper: impossible: %s", typeMismatchReason(p.Value(), v)))
+			}
+		case reflect.Slice:
+			project = PTBytes
+			set = func(x interface{}) {
+				v.SetBytes(reflect.ValueOf(x).Bytes())
+			}
+		default:
+			panic(fmt.Errorf("helper: impossible: %s", typeMismatchReason(p.Value(), v)))
+		}
+
+		pVal, err := p.Project(project)
+		if err != nil {
+			return typeMismatchReason(p.Value(), v)
+		}
+		if overflow != nil && overflow(pVal) {
+			return fmt.Sprintf("value %v overflows struct field of type %v", pVal, v.Type())
+		}
+		set(pVal)
+	}
+	if slice.IsValid() {
+		slice.Set(reflect.Append(slice, v))
+	}
 	return ""
 }
 
@@ -150,27 +251,69 @@ func (p *structPLS) getDefaultKind() string {
 
 func (p *structPLS) save(propMap PropertyMap, prefix string, is IndexSetting) (idxCount int, err error) {
 	saveProp := func(name string, si IndexSetting, v reflect.Value, st *structTag) (err error) {
+		if st.substructCodec != nil {
+			count, err := (&structPLS{v, st.substructCodec}).save(propMap, name, si)
+			if err == nil {
+				idxCount += count
+				if idxCount > maxIndexedProperties {
+					err = errors.New("gae: too many indexed properties")
+				}
+			}
+			return err
+		}
+
+		prop := Property{}
+		if st.convert {
+			prop, err = v.Addr().Interface().(PropertyConverter).ToProperty()
+		} else {
+			err = prop.SetValue(v.Interface(), si)
+		}
+		if err != nil {
+			return err
+		}
+		propMap[name] = append(propMap[name], prop)
+		if prop.IndexSetting() == ShouldIndex {
+			idxCount++
+			if idxCount > maxIndexedProperties {
+				return errors.New("gae: too many indexed properties")
+			}
+		}
 		return nil
 	}
 
 	for i, st := range p.c.byIndex {
-		if st.name == "-" {
+		if st.name == "-" || st.isExtra {
 			continue
 		}
 		name := st.name
+		if prefix != "" {
+			name = prefix + name
+		}
 		v := p.o.Field(i)
 		is1 := is
 		if st.idxSetting == NoIndex {
 			is1 = NoIndex
 		}
-		if err = saveProp(name, is1, v, &st); err != nil {
-			return
+		if st.isSlice {
+			for j := 0; j < v.Len(); j++ {
+				if err = saveProp(name, is1, v.Index(j), &st); err != nil {
+					return
+				}
+			}
+		} else {
+			if err = saveProp(name, is1, v, &st); err != nil {
+				return
+			}
 		}
 	}
 
 	if i, ok := p.c.bySpecial["extra"]; ok {
-		for fullName, vals := range p.o.Field(i).Interface().(PropertyMap) {
-			propMap[fullName] = vals
+		if p.c.byIndex[i].name != "-" {
+			for fullName, vals := range p.o.Field(i).Interface().(PropertyMap) {
+				if _, ok := propMap[fullName]; !ok {
+					propMap[fullName] = vals
+				}
+			}
 		}
 	}
 

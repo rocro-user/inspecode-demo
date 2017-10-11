@@ -86,6 +86,18 @@ func runParseCallback(cbIface interface{}) (isKey, hasErr, hasCursorCB bool, mat
 		}
 	}
 
+	hasCursorCB = numIn == 2
+	if hasCursorCB && cbTyp.In(1) != typeOfCursorCB {
+		badSig()
+	}
+
+	if cbTyp.NumOut() > 1 {
+		badSig()
+	} else if cbTyp.NumOut() == 1 && cbTyp.Out(0) != typeOfError {
+		badSig()
+	}
+	hasErr = cbTyp.NumOut() == 1
+
 	return
 }
 
@@ -105,8 +117,39 @@ func (d *datastoreImpl) Run(q *Query, cbIface interface{}) error {
 	switch {
 	case hasErr && hasCursorCB:
 		cb = func(v reflect.Value, cb CursorCB) error {
-			return cbVal.Call([]reflect.Value{v, reflect.ValueOf(cb)})[0].Interface()
+			err := cbVal.Call([]reflect.Value{v, reflect.ValueOf(cb)})[0].Interface()
+			if err != nil {
+				return err.(error)
+			}
+			return nil
 		}
+
+	case hasErr && !hasCursorCB:
+		cb = func(v reflect.Value, _ CursorCB) error {
+			err := cbVal.Call([]reflect.Value{v})[0].Interface()
+			if err != nil {
+				return err.(error)
+			}
+			return nil
+		}
+
+	case !hasErr && hasCursorCB:
+		cb = func(v reflect.Value, cb CursorCB) error {
+			cbVal.Call([]reflect.Value{v, reflect.ValueOf(cb)})
+			return nil
+		}
+
+	case !hasErr && !hasCursorCB:
+		cb = func(v reflect.Value, _ CursorCB) error {
+			cbVal.Call([]reflect.Value{v})
+			return nil
+		}
+	}
+
+	if isKey {
+		return d.RawInterface.Run(fq, func(k *Key, _ PropertyMap, gc CursorCB) error {
+			return cb(reflect.ValueOf(k), gc)
+		})
 	}
 
 	return d.RawInterface.Run(fq, func(k *Key, pm PropertyMap, gc CursorCB) error {
@@ -129,6 +172,24 @@ func (d *datastoreImpl) Count(q *Query) (int64, error) {
 
 func (d *datastoreImpl) GetAll(q *Query, dst interface{}) error {
 	v := reflect.ValueOf(dst)
+	if v.Kind() != reflect.Ptr {
+		panic(fmt.Errorf("invalid GetAll dst: must have a ptr-to-slice: %T", dst))
+	}
+	if !v.IsValid() || v.IsNil() {
+		panic(errors.New("invalid GetAll dst: <nil>"))
+	}
+
+	if keys, ok := dst.(*[]*Key); ok {
+		fq, err := q.KeysOnly(true).Finalize()
+		if err != nil {
+			return err
+		}
+
+		return d.RawInterface.Run(fq, func(k *Key, _ PropertyMap, _ CursorCB) error {
+			*keys = append(*keys, k)
+			return nil
+		})
+	}
 	fq, err := q.Finalize()
 	if err != nil {
 		return err
