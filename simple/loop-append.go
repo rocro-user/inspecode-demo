@@ -13,9 +13,8 @@ func fn10_1() {
 	}
 
 	var a, b []int
-	for _, v := range a { // MATCH /should replace loop/
-		b = append(b, v)
-	}
+	// MATCH /should replace loop/
+	b = append(b, a...)
 
 	var m map[string]int
 	var c []int

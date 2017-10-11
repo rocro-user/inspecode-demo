@@ -6,26 +6,26 @@ func fn11() {
 	var m map[int]int
 	var ch chan int
 
-	if s == nil || len(s) == 0 { // MATCH /should omit nil check/
+	if len(s) == 0 { // MATCH /should omit nil check/
 	}
-	if m == nil || len(m) == 0 { // MATCH /should omit nil check/
+	if len(m) == 0 { // MATCH /should omit nil check/
 	}
-	if ch == nil || len(ch) == 0 { // MATCH /should omit nil check/
+	if len(ch) == 0 { // MATCH /should omit nil check/
 	}
 
-	if s != nil && len(s) != 0 { // MATCH /should omit nil check/
+	if len(s) != 0 { // MATCH /should omit nil check/
 	}
-	if m != nil && len(m) > 0 { // MATCH /should omit nil check/
+	if len(m) > 0 { // MATCH /should omit nil check/
 	}
-	if s != nil && len(s) > 5 { // MATCH /should omit nil check/
+	if len(s) > 5 { // MATCH /should omit nil check/
 	}
-	if s != nil && len(s) >= 5 { // MATCH /should omit nil check/
+	if len(s) >= 5 { // MATCH /should omit nil check/
 	}
 	const five = 5
-	if s != nil && len(s) == five { // MATCH /should omit nil check/
+	if len(s) == five { // MATCH /should omit nil check/
 	}
 
-	if ch != nil && len(ch) == 5 { // MATCH /should omit nil check/
+	if len(ch) == 5 { // MATCH /should omit nil check/
 	}
 
 	if pa == nil || len(pa) == 0 { // nil check cannot be removed with pointer to an array

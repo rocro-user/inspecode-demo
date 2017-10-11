@@ -2,13 +2,11 @@ package simple
 
 func fn3() {
 	var b1, b2 []byte
-	for i, v := range b1 { // MATCH /should use copy/
-		b2[i] = v
-	}
+	// MATCH /should use copy/
+	copy(b2, b1)
 
-	for i := range b1 { // MATCH /should use copy/
-		b2[i] = b1[i]
-	}
+	// MATCH /should use copy/
+	copy(b2, b1)
 
 	type T [][16]byte
 	var a T
@@ -18,9 +16,8 @@ func fn3() {
 	}
 
 	var b3, b4 []*byte
-	for i := range b3 { // MATCH /should use copy/
-		b4[i] = b3[i]
-	}
+	// MATCH /should use copy/
+	copy(b4, b3)
 
 	var m map[int]byte
 	for i, v := range b1 {

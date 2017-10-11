@@ -2,27 +2,29 @@ package simple
 
 func fn12() {
 	var ch chan int
-	select { // MATCH /should use a simple channel send/
-	case <-ch:
-	}
+	// MATCH /should use a simple channel send/
+	<-ch
+
 outer:
-	for { // MATCH /should use for range/
-		select {
-		case <-ch:
-			break outer
-		}
+	// MATCH /should use for range/
+
+	for range ch {
+
+		break outer
+
 	}
 
-	for { // MATCH /should use for range/
-		select {
-		case x := <-ch:
-			_ = x
-		}
+	// MATCH /should use for range/
+
+	for x := range ch {
+
+		_ = x
+
 	}
 
 	for {
-		select { // MATCH /should use a simple channel send/
-		case ch <- 0:
-		}
+		// MATCH /should use a simple channel send/
+		ch <- 0
+
 	}
 }
