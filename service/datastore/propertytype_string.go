@@ -4,13 +4,13 @@ package datastore
 
 import "fmt"
 
-const _PropertyType_name = "PTNullPTIntPTTimePTBoolPTBytesPTStringPTFloatPTGeoPointPTKeyPTBlobKeyPTUnknown"
+const _PropertyTypeName = "PTNullPTIntPTTimePTBoolPTBytesPTStringPTFloatPTGeoPointPTKeyPTBlobKeyPTUnknown"
 
-var _PropertyType_index = [...]uint8{0, 6, 11, 17, 23, 30, 38, 45, 55, 60, 69, 78}
+var _PropertyTypeIndex = [...]uint8{0, 6, 11, 17, 23, 30, 38, 45, 55, 60, 69, 78}
 
 func (i PropertyType) String() string {
-	if i >= PropertyType(len(_PropertyType_index)-1) {
+	if i >= PropertyType(len(_PropertyTypeIndex)-1) {
 		return fmt.Sprintf("PropertyType(%d)", i)
 	}
-	return _PropertyType_name[_PropertyType_index[i]:_PropertyType_index[i+1]]
+	return _PropertyTypeName[_PropertyTypeIndex[i]:_PropertyTypeIndex[i+1]]
 }
