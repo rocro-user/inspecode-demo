@@ -5,17 +5,14 @@ import "errors"
 func fn5_1() error {
 	var err error
 
-	if err != nil { // MATCH /simplified/
-		return err
-	}
-	return nil
+	// MATCH /simplified/
+	return err
 
 	_ = 0
 
-	if err != nil { // MATCH /simplified/
-		return err
-	}
+	// MATCH /simplified/
 	return err
+
 }
 
 func fn5_2() (int, string, error) {
@@ -24,16 +21,12 @@ func fn5_2() (int, string, error) {
 	var z int
 	var err error
 
-	if err != nil { // MATCH /simplified/
-		return x, y, err
-	}
-	return x, y, nil
+	// MATCH /simplified/
+	return x, y, err
 
 	_ = 0
 
-	if err != nil { // MATCH /simplified/
-		return x, y, err
-	}
+	// MATCH /simplified/
 	return x, y, err
 
 	_ = 0
@@ -88,18 +81,16 @@ func fn5_5() interface{} {
 	return nil
 
 	var v interface{}
-	if v != nil { // MATCH /simplified/
-		return v
-	}
-	return nil
+	// MATCH /simplified/
+	return v
+
 }
 
 func fn5_6() {
 	_ = func() error {
 		var err error
-		if err != nil { // MATCH /simplified/
-			return err
-		}
-		return nil
+		// MATCH /simplified/
+		return err
+
 	}
 }

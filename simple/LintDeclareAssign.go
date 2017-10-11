@@ -1,17 +1,17 @@
 package simple
 
 func fn7() {
-	var x int // MATCH "should merge variable declaration with assignment on next line"
-	x = 1
+	// MATCH "should merge variable declaration with assignment on next line"
+	var x = 1
 	_ = x
 
-	var y interface{} // MATCH "should merge variable declaration with assignment on next line"
-	y = 1
+	// MATCH "should merge variable declaration with assignment on next line"
+	var y interface{} = 1
 	_ = y
 
 	if true {
 		var x string // MATCH "should merge variable declaration with assignment on next line"
-		x = ""
+
 		_ = x
 	}
 

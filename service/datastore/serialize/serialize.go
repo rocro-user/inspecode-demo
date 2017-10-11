@@ -91,7 +91,7 @@ func ReadKey(buf Buffer, context KeyContext, appid, namespace string) (ret *ds.K
 		return
 	}
 
-	if context == WithoutContext {
+	if !context {
 		// overrwrite with the supplied ones
 		actualAid = appid
 		actualNS = namespace
