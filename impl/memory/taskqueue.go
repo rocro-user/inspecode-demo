@@ -232,7 +232,7 @@ func (t *taskqueueTxnImpl) Testable() tq.Testable {
 
 ////////////////////////////// private functions ///////////////////////////////
 
-var validTaskName = regexp.MustCompile("^[0-9a-zA-Z\\-\\_]{0,500}$")
+var validTaskName = regexp.MustCompile(`^[0-9a-zA-Z\-\_]{0,500}$`)
 
 const validTaskChars = "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ-_"
 

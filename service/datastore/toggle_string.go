@@ -4,13 +4,13 @@ package datastore
 
 import "fmt"
 
-const _Toggle_name = "AutoOnOff"
+const _ToggleName = "AutoOnOff"
 
-var _Toggle_index = [...]uint8{0, 4, 6, 9}
+var _ToggleIndex = [...]uint8{0, 4, 6, 9}
 
 func (i Toggle) String() string {
-	if i >= Toggle(len(_Toggle_index)-1) {
+	if i >= Toggle(len(_ToggleIndex)-1) {
 		return fmt.Sprintf("Toggle(%d)", i)
 	}
-	return _Toggle_name[_Toggle_index[i]:_Toggle_index[i+1]]
+	return _ToggleName[_ToggleIndex[i]:_ToggleIndex[i+1]]
 }

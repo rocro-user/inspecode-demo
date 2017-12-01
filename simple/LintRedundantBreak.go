@@ -4,7 +4,7 @@ func fn8(x int) {
 	switch x {
 	case 1:
 		println()
-		break // MATCH /redundant break/
+		// MATCH /redundant break/
 	case 2:
 		println()
 	case 3:
